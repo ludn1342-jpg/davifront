@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación OTP - Davivienda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; max-width: 400px; width: 90%; }
+        h2 { color: #d32f2f; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 25px; font-size: 15px; }
+        input { width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px; border: 1px solid #888; border-radius: 8px; margin-bottom: 20px; font-weight: bold; outline: none; }
+        button { background-color: #d32f2f; color: white; border: none; padding: 15px; width: 100%; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #b71c1c; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Verificación de Seguridad</h2>
+        <p>Hemos enviado un código a tu teléfono. Ingrésalo para continuar con tu pago.</p>
+        <input type="text" maxlength="6" placeholder="000000" id="codigoOtp">
+        <button onclick="alert('Simulación: Pago finalizado con éxito')">Validar Código</button>
+    </div>
+</body>
+</html>
