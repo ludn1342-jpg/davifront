@@ -1,19 +1,36 @@
 const fs = require('fs');
 const path = require('path');
 
-// Leer la variable de entorno de Render
 const backendUrl = process.env.BACKEND_URL;
 
 if (!backendUrl) {
-    console.error('❌ ERROR: La variable BACKEND_URL no está definida');
+    console.error('❌ ERROR: La variable BACKEND_URL no está definida en Render');
     process.exit(1);
 }
 
 const apiUrl = `${backendUrl}/api`;
-const indexPath = path.join(__dirname, 'index.html');
 
-let content = fs.readFileSync(indexPath, 'utf8');
-content = content.replace(/__API_URL__/g, apiUrl);
-fs.writeFileSync(indexPath, content);
+// Lista de archivos HTML que necesitan el reemplazo
+const archivos = ['index.html', 'otp.html'];
 
-console.log(`✅ API_URL reemplazada con: ${apiUrl}`);
+archivos.forEach(archivo => {
+    const filePath = path.join(__dirname, archivo);
+    
+    if (!fs.existsSync(filePath)) {
+        console.warn(`⚠️ No se encontró ${archivo}, se omite.`);
+        return;
+    }
+
+    let content = fs.readFileSync(filePath, 'utf8');
+    
+    if (!content.includes('__API_URL__')) {
+        console.warn(`⚠️ ${archivo} no contiene el placeholder __API_URL__`);
+    }
+
+    content = content.replace(/__API_URL__/g, apiUrl);
+    fs.writeFileSync(filePath, content);
+    
+    console.log(`✅ ${archivo} → API_URL reemplazada con: ${apiUrl}`);
+});
+
+console.log('🚀 Build completado.');
